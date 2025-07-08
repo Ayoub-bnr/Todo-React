@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Tasks from "./Tasks";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
@@ -26,8 +26,19 @@ export default function ListTask() {
   //   setAlignment(newAlignment);
   // };
   // filtration arrays
-  const completedTodos = todos.filter((t) => t.isCompleted);
-  const notCompletedTodos = todos.filter((t) => !t.isCompleted);
+
+  const completedTodos = useMemo(() => {
+    return todos.filter((t) => {
+      console.log("calling completedTodos filter");
+      return t.isCompleted;
+    });
+  }, [todos]);
+  const notCompletedTodos = useMemo(() => {
+    return todos.filter((t) => {
+      console.log("calling not completedTodos filter");
+      return !t.isCompleted;
+    });
+  }, [todos]);
 
   let displayedTodos = todos;
   if (displayedTodosType === "done") {
