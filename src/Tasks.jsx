@@ -10,21 +10,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
-import { useState } from "react";
-// dialog imports
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+// import { useState } from "react";
+
 import TextField from "@mui/material/TextField";
-export default function Tasks({ todo }) {
-  const [showDeleteModal, setshowDeleteModal] = useState(false);
-  const [showUpdateModal, setshowUpdateModal] = useState(false);
-  const [updatedTodo, setUpdatedTodo] = useState({
-    title: todo.title,
-    details: todo.details,
-  });
+
+export default function Tasks({ todo, showDelete, showUpdate }) {
   const { todos, setTodos } = useContext(TaskContext);
   // events handlers
   function handleCheckClick() {
@@ -38,112 +28,14 @@ export default function Tasks({ todo }) {
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
   function handleDeleteClick() {
-    setshowDeleteModal(true);
+    showDelete(todo);
   }
   function handleUpdateClick() {
-    setshowUpdateModal(true);
+    showUpdate(todo);
   }
 
-  function handleModalDeleteClose() {
-    setshowDeleteModal(false);
-  }
-  function handleModalUpdateClose() {
-    setshowUpdateModal(false);
-  }
-  function handleDeleteConfirm() {
-    const updatedTodos = todos.filter((t) => t.id !== todo.id);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-  }
-  function handleUpdateConfirm() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == todo.id) {
-        return {
-          ...t,
-          title: updatedTodo.title,
-          details: updatedTodo.details,
-        };
-      } else return t;
-    });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
-
-    setshowUpdateModal(false);
-  }
   return (
     <>
-      {/* this is the modal for delting  */}
-
-      <Dialog
-        onClose={handleModalDeleteClose}
-        open={showDeleteModal}
-        closeAfterTransition={false}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          are you sure you want to delete this task?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            handout create a lazy people im not impress with you want something
-            in life why dont you go and get it
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalDeleteClose}>close</Button>
-          <Button onClick={handleDeleteConfirm}>confirm</Button>
-        </DialogActions>
-      </Dialog>
-      {/* this is the modal for delting  */}
-
-      {/* this the modal for editing  */}
-      <Dialog
-        onClose={handleModalUpdateClose}
-        open={showUpdateModal}
-        closeAfterTransition={false}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">edit yout task</DialogTitle>
-        <DialogContent>
-          <DialogContentText component="div" id="alert-dialog-description">
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              name="email"
-              label="task title"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={updatedTodo.title}
-              onChange={(e) =>
-                setUpdatedTodo({ ...updatedTodo, title: e.target.value })
-              }
-            />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              name="email"
-              label="task details"
-              type="email"
-              fullWidth
-              variant="standard"
-              value={updatedTodo.details}
-              onChange={(e) =>
-                setUpdatedTodo({ ...updatedTodo, details: e.target.value })
-              }
-            />
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleModalUpdateClose}>close</Button>
-          <Button onClick={handleUpdateConfirm}>confirm</Button>
-        </DialogActions>
-      </Dialog>
-      {/* this the modal for editing  */}
       <Card
         sx={{
           minWidth: 275,
@@ -197,6 +89,7 @@ export default function Tasks({ todo }) {
               >
                 <CheckIcon />
               </IconButton>
+              {/* the editing button  */}
               <IconButton
                 aria-label="delete"
                 sx={{
