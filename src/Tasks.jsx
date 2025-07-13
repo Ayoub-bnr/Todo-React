@@ -10,10 +10,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
-import { ToastContext } from "./contexts/ToastContext";
+
+import { useToast } from "./contexts/ToastContext";
 export default function Tasks({ todo, showDelete, showUpdate }) {
   const { todos, setTodos } = useContext(TaskContext);
-  const { showHideToast } = useContext(ToastContext);
+  const { showHideToast } = useToast();
   // events handlers
   function handleCheckClick() {
     const updatedTodos = todos.map((t) => {

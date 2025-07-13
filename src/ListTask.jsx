@@ -16,7 +16,8 @@ import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
 import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
-import { ToastContext } from "./contexts/ToastContext";
+
+import { useToast } from "./contexts/ToastContext";
 // dialog imports
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -31,7 +32,7 @@ export default function ListTask() {
     details: "",
   });
   // ends here
-  const { showHideToast } = useContext(ToastContext);
+  const { showHideToast } = useToast();
 
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const [modalTodo, setModalTodo] = useState(null);
@@ -141,7 +142,7 @@ export default function ListTask() {
       <Dialog
         onClose={handleModalDeleteClose}
         open={showDeleteModal}
-        closeAfterTransition={false}
+        closeAfterTransition={true}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
