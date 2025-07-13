@@ -10,23 +10,28 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
-// import { useState } from "react";
-
-import TextField from "@mui/material/TextField";
-
+import { ToastContext } from "./contexts/ToastContext";
 export default function Tasks({ todo, showDelete, showUpdate }) {
   const { todos, setTodos } = useContext(TaskContext);
+  const { showHideToast } = useContext(ToastContext);
   // events handlers
   function handleCheckClick() {
     const updatedTodos = todos.map((t) => {
       if (t.id == todo.id) {
         t.isCompleted = !t.isCompleted;
+
+        // Show toast based on the new state
+        t.isCompleted
+          ? showHideToast("Task completed successfully!")
+          : showHideToast("Task marked as incomplete");
       }
       return t;
     });
+
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
   }
+
   function handleDeleteClick() {
     showDelete(todo);
   }

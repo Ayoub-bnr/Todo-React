@@ -16,6 +16,7 @@ import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
 import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
+import { ToastContext } from "./contexts/ToastContext";
 // dialog imports
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -30,16 +31,13 @@ export default function ListTask() {
     details: "",
   });
   // ends here
+  const { showHideToast } = useContext(ToastContext);
+
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const [modalTodo, setModalTodo] = useState(null);
   const { todos, setTodos } = useContext(TaskContext);
   const [titleInput, setTitleInput] = useState("");
   const [displayedTodosType, setDisplayedTodosType] = useState("all");
-  // const [alignment, setAlignment] = useState("web");
-  // const handleChange = (event, newAlignment) => {
-  //   setAlignment(newAlignment);
-  // };
-  // filtration arrays
 
   const completedTodos = useMemo(() => {
     return todos.filter((t) => {
@@ -84,6 +82,7 @@ export default function ListTask() {
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
     setTitleInput("");
+    showHideToast("Task added successfully!");
   }
   function handleDeleteModal(todo) {
     setModalTodo(todo);
@@ -96,6 +95,9 @@ export default function ListTask() {
     const updatedTodos = todos.filter((t) => t.id !== modalTodo.id);
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    setshowDeleteModal(false);
+
+    showHideToast("Task deleted successfully!");
   }
   // here the handlers for the edit
 
@@ -122,6 +124,7 @@ export default function ListTask() {
     setTodos(updatedTodos);
     localStorage.setItem("todos", JSON.stringify(updatedTodos));
     setshowUpdateModal(false);
+    showHideToast("Task updated successfully!");
   }
   const todo = displayedTodos.map((t) => {
     return (
