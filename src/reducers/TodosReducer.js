@@ -37,6 +37,17 @@ export default function reducer(currentTodos, action) {
       const storedTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
       return storedTodos;
     }
+    case "btnCheck": {
+      const updatedTodos = currentTodos.map((t) => {
+        if (t.id == action.payload.id) {
+          return { ...t, isCompleted: !t.isCompleted };
+        }
+        return t;
+      });
+
+      localStorage.setItem("todos", JSON.stringify(updatedTodos));
+      return updatedTodos;
+    }
     default: {
       throw Error(`Unknown action type: ${action.type}`);
     }

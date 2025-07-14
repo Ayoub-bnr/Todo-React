@@ -9,12 +9,12 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useState, useEffect, useMemo, useReducer } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Tasks from "./Tasks";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 // import { useContext } from "react";
-import { TaskContext } from "./contexts/TaskContext";
+import { useTodos } from "./contexts/TaskContext";
 import TodosReducers from "./reducers/TodosReducer";
 import { useToast } from "./contexts/ToastContext";
 // dialog imports
@@ -23,6 +23,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+
 export default function ListTask() {
   // new changes for lifting edit
   const [showUpdateModal, setshowUpdateModal] = useState(false);
@@ -33,7 +34,8 @@ export default function ListTask() {
   // ends here
   const { showHideToast } = useToast();
 
-  const [todos, dispatch] = useReducer(TodosReducers, []);
+  const { todos, dispatch } = useTodos();
+
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const [modalTodo, setModalTodo] = useState(null);
   const [titleInput, setTitleInput] = useState("");
@@ -63,7 +65,7 @@ export default function ListTask() {
 
   useEffect(() => {
     dispatch({ type: "get" });
-    ///eslint-disable-next-line react-hooks/exhaustive-deps
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // handlers
   function changeDisplayedType(e) {
@@ -106,9 +108,9 @@ export default function ListTask() {
       type: "updated",
       payload: {
         upTodo: {
-          id: modalTodo.id, // from modalTodo
-          title: updatedTodo.title, // from input
-          details: updatedTodo.details, // from input
+          id: modalTodo.id,
+          title: updatedTodo.title,
+          details: updatedTodo.details,
         },
       },
     });

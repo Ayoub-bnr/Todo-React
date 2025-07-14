@@ -1,36 +1,29 @@
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+
 import Grid from "@mui/material/Grid";
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import { useContext } from "react";
-import { TaskContext } from "./contexts/TaskContext";
+import { useTodos } from "./contexts/TaskContext";
 
 import { useToast } from "./contexts/ToastContext";
 export default function Tasks({ todo, showDelete, showUpdate }) {
-  const { todos, setTodos } = useContext(TaskContext);
+  const { dispatch } = useTodos();
   const { showHideToast } = useToast();
   // events handlers
   function handleCheckClick() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == todo.id) {
-        t.isCompleted = !t.isCompleted;
+    const isBecomingCompleted = !todo.isCompleted;
 
-        // Show toast based on the new state
-        t.isCompleted
-          ? showHideToast("Task completed successfully!")
-          : showHideToast("Task marked as incomplete");
-      }
-      return t;
-    });
+    dispatch({ type: "btnCheck", payload: todo });
 
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    if (isBecomingCompleted) {
+      showHideToast("Task completed successfully!");
+    } else {
+      showHideToast("Task marked as incomplete");
+    }
   }
 
   function handleDeleteClick() {
