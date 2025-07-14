@@ -9,14 +9,13 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useReducer } from "react";
 import Tasks from "./Tasks";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { v4 as uuidv4 } from "uuid";
-import { useContext } from "react";
+// import { useContext } from "react";
 import { TaskContext } from "./contexts/TaskContext";
-
+import TodosReducers from "./reducers/TodosReducer";
 import { useToast } from "./contexts/ToastContext";
 // dialog imports
 import Dialog from "@mui/material/Dialog";
@@ -34,9 +33,9 @@ export default function ListTask() {
   // ends here
   const { showHideToast } = useToast();
 
+  const [todos, dispatch] = useReducer(TodosReducers, []);
   const [showDeleteModal, setshowDeleteModal] = useState(false);
   const [modalTodo, setModalTodo] = useState(null);
-  const { todos, setTodos } = useContext(TaskContext);
   const [titleInput, setTitleInput] = useState("");
   const [displayedTodosType, setDisplayedTodosType] = useState("all");
 
@@ -63,9 +62,8 @@ export default function ListTask() {
   }
 
   useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
-    setTodos(storedTodos);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch({ type: "get" });
+    ///eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // handlers
   function changeDisplayedType(e) {
@@ -73,15 +71,7 @@ export default function ListTask() {
   }
 
   function handleAddTask() {
-    const newTask = {
-      id: uuidv4(),
-      title: titleInput,
-      details: "this is ayoub ",
-      isCompleted: false,
-    };
-    const updatedTodos = [...todos, newTask];
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "added", payload: { newTitle: titleInput } });
     setTitleInput("");
     showHideToast("Task added successfully!");
   }
@@ -93,9 +83,8 @@ export default function ListTask() {
     setshowDeleteModal(false);
   }
   function handleDeleteConfirm() {
-    const updatedTodos = todos.filter((t) => t.id !== modalTodo.id);
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+    dispatch({ type: "deleted", payload: { delTodo: modalTodo } });
+
     setshowDeleteModal(false);
 
     showHideToast("Task deleted successfully!");
@@ -113,17 +102,17 @@ export default function ListTask() {
   }
 
   function handleUpdateConfirm() {
-    const updatedTodos = todos.map((t) => {
-      if (t.id == modalTodo.id) {
-        return {
-          ...t,
-          title: updatedTodo.title,
-          details: updatedTodo.details,
-        };
-      } else return t;
+    dispatch({
+      type: "updated",
+      payload: {
+        upTodo: {
+          id: modalTodo.id, // from modalTodo
+          title: updatedTodo.title, // from input
+          details: updatedTodo.details, // from input
+        },
+      },
     });
-    setTodos(updatedTodos);
-    localStorage.setItem("todos", JSON.stringify(updatedTodos));
+
     setshowUpdateModal(false);
     showHideToast("Task updated successfully!");
   }
